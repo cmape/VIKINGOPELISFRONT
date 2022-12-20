@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Link, useNavigate } from "react-router-dom";
+
+import { API_URL, showMessage } from "../../util/Util";
 
 export const Login = () => {
   let navigate = useNavigate();
@@ -32,16 +33,11 @@ export const Login = () => {
     event.preventDefault();
     const response = await sendAuthApi();
 
-    if (response && response.token && response.token != "") {
+    if (response && response.token && response.token !== "") {
       localStorage.setItem("authData", JSON.stringify(response));
       navigate("/movies");
     } else {
-      Swal.fire({
-        title: "Error!",
-        text: "Credenciales no válidas",
-        icon: "error",
-        confirmButtonText: "Reintentar",
-      });
+      showMessage("Error!", "Credenciales no válidas", "error", "Reintentar");
     }
   };
 
@@ -53,38 +49,41 @@ export const Login = () => {
         "Content-type": "application/json",
       },
     };
-    let response = await fetch("http://localhost:8080/api/auth", requestData);
+    let response = await fetch(API_URL + "auth", requestData);
     response = await response.json();
     return response;
   };
 
   return (
-    <div className="container">
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            name="user"
-            onChange={handleChange}
-          />
-        </Form.Group>
+    <div className="row justify-content-center">
+      <div className="col-8 col-sm-8 col-md-4 col-lg-3">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              name="user"
+              onChange={handleChange}
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Contraseña</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Registra tu contraseña"
-            name="password"
-            onChange={handleChange}
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Registra tu contraseña"
+              name="password"
+              onChange={handleChange}
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
+        <Link to="/register">Registrarse</Link>
+      </div>
     </div>
   );
 };
